@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "11159783148",
+    "project_id": "traffiq-sense-b473b",
+    "storage_bucket": "traffiq-sense-b473b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:11159783148:android:67403675643745aef047c9",
+        "android_client_info": {
+          "package_name": "com.eyecon.glo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASW-FIAVcTSioMndTqJtw5jqbMAwyI1zM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

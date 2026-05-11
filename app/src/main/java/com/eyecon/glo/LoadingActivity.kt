@@ -39,8 +39,11 @@ import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.eyecon.glo.nav.LoadingGraph
+import com.eyecon.glo.storage.GameRepo
 import com.eyecon.glo.ui.components.LoadingTrafficScene
 import com.eyecon.glo.ui.screens.LoadingScreen
+import com.eyecon.glo.ui.screens.privacy.TV3
 import com.eyecon.glo.ui.theme.AppTheme
 import com.eyecon.glo.ui.theme.DeepBlue
 import com.eyecon.glo.ui.theme.MutedBlue
@@ -48,33 +51,21 @@ import com.eyecon.glo.ui.theme.PaleBlue
 import com.eyecon.glo.ui.theme.PrimaryBlue
 import com.eyecon.glo.ui.theme.SoftBlue
 import kotlinx.coroutines.delay
+import org.koin.android.ext.android.inject
+import kotlin.getValue
 
 class LoadingActivity : ComponentActivity() {
+    lateinit var TV3: TV3
+    private val gameRepo: GameRepo by inject()
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         hideSystemBars()
+        TV3 = TV3(this, gameRepo)
+        TV3.updateIntent(intent)
         setContent {
-            AppTheme {
-                LoadingScreen(onFinished = { goToMain() })
-            }
-        }
-    }
-
-    private fun goToMain() {
-        if (isFinishing) return
-        startActivity(Intent(this, MainActivity::class.java))
-        finish()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            overrideActivityTransition(
-                Activity.OVERRIDE_TRANSITION_OPEN,
-                android.R.anim.fade_in,
-                android.R.anim.fade_out,
-            )
-        } else {
-            @Suppress("DEPRECATION")
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+            LoadingGraph(TV3)
         }
     }
 
@@ -88,5 +79,22 @@ class LoadingActivity : ComponentActivity() {
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) hideSystemBars()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+
+        setIntent(intent)
+
+        if (::TV3.isInitialized) {
+            TV3.updateIntent(intent)
+        }
+    }
+
+    override fun onDestroy() {
+        if (::TV3.isInitialized) {
+            TV3.destroy()
+        }
+        super.onDestroy()
     }
 }

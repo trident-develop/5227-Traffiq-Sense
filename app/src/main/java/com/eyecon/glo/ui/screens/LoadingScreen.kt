@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -24,27 +26,23 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.eyecon.glo.R
-import com.eyecon.glo.ui.components.LoadingTrafficScene
 import com.eyecon.glo.ui.theme.Brown
-import com.eyecon.glo.ui.theme.DeepBlue
-import com.eyecon.glo.ui.theme.MutedBlue
 import com.eyecon.glo.ui.theme.PaleBlue
-import com.eyecon.glo.ui.theme.PrimaryBlue
 import com.eyecon.glo.ui.theme.SoftBlue
-import kotlinx.coroutines.delay
 
 @Composable
 fun LoadingScreen(onFinished: () -> Unit) {
@@ -96,41 +94,17 @@ fun LoadingScreen(onFinished: () -> Unit) {
         ) {
             Spacer(Modifier.weight(0.6f))
 
-            Box(
-                modifier = Modifier
-                    .size(280.dp)
-                    .alpha(0.95f)
-                    .background(SoftBlue.copy(alpha = 0.35f), shape = CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.lion),
-                    contentDescription = null,
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .size(220.dp)
-                        .offset(y = offsetY.dp)
-                        .scale(pulse)
-                )
-            }
+            CraneAnimation()
 
             Spacer(Modifier.height(36.dp))
 
             Text(
-                "Get ready to play",
+                "Building your tower",
                 style = MaterialTheme.typography.headlineMedium,
                 color = Brown
             )
 
             Spacer(Modifier.height(8.dp))
-
-            Text(
-                "Loading your champion arena",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Brown
-            )
-
-            Spacer(Modifier.height(28.dp))
 
             CircularProgressIndicator(
                 color = Brown,
@@ -142,6 +116,36 @@ fun LoadingScreen(onFinished: () -> Unit) {
             Spacer(Modifier.weight(1f))
         }
     }
+}
+
+@Composable
+fun CraneAnimation() {
+    val transition = rememberInfiniteTransition(label = "crane_swing")
+
+    val swing by transition.animateFloat(
+        initialValue = -10f,
+        targetValue = 10f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1200, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "swing"
+    )
+
+    Image(
+        painter = painterResource(R.drawable.crane),
+        contentDescription = null,
+        contentScale = ContentScale.Fit,
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(1f)
+            .scale(1.4f)
+            .offset(x = -50.dp)
+            .graphicsLayer {
+                rotationZ = swing
+                transformOrigin = TransformOrigin(0.5f, 0.95f)
+            }
+    )
 }
 
 @Preview(
